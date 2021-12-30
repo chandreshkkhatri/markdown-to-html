@@ -3,15 +3,20 @@ import TurndownService from 'turndown';
 
 const CodeViewer = (props) => {
   const [type, setType] = useState("md");
-  var turndownService = new TurndownService()
+  const turndownService = new TurndownService()
 
   const processMarkup = (markup) => {
-    if (type == "md") {
+    if (type === "md") {
     return turndownService.turndown(markup);    
     } else {
       return markup;
     }
   }
+
+  const handleChange = (event) => {
+    setType(event.target.value);
+  }
+
   return (
     <div className="column">
       <div className="column-header">
@@ -23,8 +28,9 @@ const CodeViewer = (props) => {
             type="radio"
             value="md"
             id="md"
-            onChange={setType}
+            onChange={handleChange}
             name="type"
+            checked={type==='md'}
           />
           <label style={styles.smallFontSize} htmlFor="md">
             Markdown
@@ -34,8 +40,9 @@ const CodeViewer = (props) => {
             type="radio"
             value="html"
             id="html"
-            onChange={setType}
+            onChange={handleChange}
             name="type"
+            checked={type==='html'}
           />
           <label style={styles.smallFontSize} htmlFor="html">
             HTML

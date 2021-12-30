@@ -13,6 +13,9 @@ const RichTextEditor = (props) => {
     const markup = draftToHtml(rawEditorState, hashConfig);
     props.updateMarkup(markup);
   };
+  const _onBoldClick = () => {
+    RichUtils.toggleInlineStyle(editorState, 'BOLD');
+  }
 
   return (
     <div style={styles.root} className="column">
@@ -28,7 +31,7 @@ const RichTextEditor = (props) => {
           </select>
         </div>
         <div style={styles.inlineInputs}>
-          <button style={styles.bold}>B</button>
+          <button style={styles.bold} onClick={_onBoldClick}>B</button>
         </div>
         <div style={styles.inlineInputs}>
           <button style={styles.italic}>I</button>
