@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Editor, EditorState, RichUtils } from "draft-js";
 import "draft-js/dist/Draft.css";
 
-
 const RichTextEditor = () => {
   const [editorState, setEditorState] = useState(() =>
     EditorState.createEmpty()
@@ -10,22 +9,50 @@ const RichTextEditor = () => {
   return (
     <div style={styles.root} className="column">
       <div className="column-header">
-        <input />
-        <input />
-
-        <button style={styles.bold}>B</button>
-        <button style={styles.italic}>I</button>
-        <button style={styles.underline}>U</button>
-        <button></button>
-        <button></button>
-        <button></button>
-        <button></button>
-        <div>
-        <button><i className="fas fa-align-justify"></i></button>
-        <button><i className="fas fa-align-left"></i></button>
-        <button><i className="fas fa-align-center"></i></button>
-        <button><i className="fas fa-align-right"></i></button>
-
+        <div style={styles.inlineInputs}>
+          <select>
+            <option value="">Arial</option>
+          </select>
+        </div>
+        <div style={styles.inlineInputs}>
+          <select>
+            <option value="">Normal Text</option>
+          </select>
+        </div>
+        <div style={styles.inlineInputs}>
+          <button style={styles.bold}>B</button>
+        </div>
+        <div style={styles.inlineInputs}>
+          <button style={styles.italic}>I</button>
+        </div>
+        <div style={styles.inlineInputs}>
+          <button style={styles.underline}>U</button>
+        </div>
+        <div style={styles.inlineInputs}>
+          <button></button>
+        </div>
+        <div style={styles.inlineInputs}>
+          <button></button>
+        </div>
+        <div style={styles.inlineInputs}>
+          <button></button>
+        </div>
+        <div style={styles.inlineInputs}>
+          <button></button>
+        </div>
+        <div style={styles.inlineInputs}>
+          <button>
+            <i className="fas fa-align-justify"></i>
+          </button>
+          <button>
+            <i className="fas fa-align-left"></i>
+          </button>
+          <button>
+            <i className="fas fa-align-center"></i>
+          </button>
+          <button>
+            <i className="fas fa-align-right"></i>
+          </button>
         </div>
       </div>
       <div style={styles.editor} className="column-body">
@@ -63,6 +90,10 @@ const styles = {
   },
   underline: {
     textDecoration: "underline",
+  },
+  inlineInputs: {
+    display: "inline",
+    margin: "5px",
   },
 };
 
