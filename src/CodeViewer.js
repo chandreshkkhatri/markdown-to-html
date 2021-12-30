@@ -1,8 +1,17 @@
 import React, { useState } from "react";
+import TurndownService from 'turndown';
 
 const CodeViewer = (props) => {
   const [type, setType] = useState("md");
+  var turndownService = new TurndownService()
 
+  const processMarkup = (markup) => {
+    if (type == "md") {
+    return turndownService.turndown(markup);    
+    } else {
+      return markup;
+    }
+  }
   return (
     <div className="column">
       <div className="column-header">
@@ -34,7 +43,7 @@ const CodeViewer = (props) => {
         </div>
       </div>
       <div className="column-body">
-      {props.markup}
+      {processMarkup(props.markup)}
       </div>
     </div>
   );
