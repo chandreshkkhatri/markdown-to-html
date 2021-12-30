@@ -23,7 +23,6 @@
 
 .column-body {
   border: 1px solid rgb(129, 116, 116);
-  display: flex;
 }
 
 .text-editor {
