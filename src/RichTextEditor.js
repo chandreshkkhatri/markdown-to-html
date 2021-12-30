@@ -21,10 +21,10 @@ const RichTextEditor = () => {
         <button></button>
         <button></button>
         <div>
-        <input type="radio"/><i className="fas fa-align-left"></i>
-        <input type="radio"/><i className="fas fa-align-left"></i>
-        <input type="radio"/><i className="fas fa-align-left"></i>
-        <input type="radio"/><i className="fas fa-align-left"></i>
+        <button><i className="fas fa-align-justify"></i></button>
+        <button><i className="fas fa-align-left"></i></button>
+        <button><i className="fas fa-align-center"></i></button>
+        <button><i className="fas fa-align-right"></i></button>
 
         </div>
       </div>
