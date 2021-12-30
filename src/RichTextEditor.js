@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { Editor, EditorState, RichUtils } from "draft-js";
+import { Editor, EditorState, RichUtils, convertFromRaw } from "draft-js";
 import "draft-js/dist/Draft.css";
 
 const RichTextEditor = () => {
   const [editorState, setEditorState] = useState(() =>
     EditorState.createEmpty()
   );
+
   return (
     <div style={styles.root} className="column">
       <div className="column-header">
@@ -29,16 +30,22 @@ const RichTextEditor = () => {
           <button style={styles.underline}>U</button>
         </div>
         <div style={styles.inlineInputs}>
-          <button></button>
+          <button style={styles.redText}>A</button>
         </div>
         <div style={styles.inlineInputs}>
-          <button></button>
+          <button>
+            <i className="fas fa-link"></i>
+          </button>
         </div>
         <div style={styles.inlineInputs}>
-          <button></button>
+          <button>
+            <i className="fas fa-table"></i>
+          </button>
         </div>
         <div style={styles.inlineInputs}>
-          <button></button>
+          <button>
+            <i className="fas fa-images"></i>
+          </button>
         </div>
         <div style={styles.inlineInputs}>
           <button>
@@ -94,6 +101,9 @@ const styles = {
   inlineInputs: {
     display: "inline",
     margin: "5px",
+  },
+  redText: {
+    color: "red"
   },
 };
 

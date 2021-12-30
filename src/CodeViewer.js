@@ -32,8 +32,8 @@ const CodeViewer = () => {
             HTML
           </label>
         </div>
-        <div className="column-body"></div>
       </div>
+      <div className="column-body"></div>
     </div>
   );
 };
@@ -44,7 +44,7 @@ const styles = {
     margin: "5px",
   },
   smallFontSize: {
-    fontSize: '12px',
+    fontSize: "12px",
   },
 };
 
