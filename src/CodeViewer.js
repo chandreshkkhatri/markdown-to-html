@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const CodeViewer = () => {
+const CodeViewer = (props) => {
   const [type, setType] = useState("md");
 
   return (
@@ -33,7 +33,9 @@ const CodeViewer = () => {
           </label>
         </div>
       </div>
-      <div className="column-body"></div>
+      <div className="column-body">
+      {props.markup}
+      </div>
     </div>
   );
 };

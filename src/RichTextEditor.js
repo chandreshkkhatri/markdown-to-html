@@ -1,11 +1,18 @@
 import React, { useState } from "react";
-import { Editor, EditorState, RichUtils, convertFromRaw } from "draft-js";
+import { Editor, EditorState, RichUtils, convertToRaw } from "draft-js";
 import "draft-js/dist/Draft.css";
+import draftToHtml from "draftjs-to-html";
 
-const RichTextEditor = () => {
+const RichTextEditor = (props) => {
   const [editorState, setEditorState] = useState(() =>
     EditorState.createEmpty()
   );
+  const handleChange = (newEditorState) => {
+    setEditorState(newEditorState);
+    const rawEditorState = convertToRaw(newEditorState.getCurrentContent());
+    const markup = draftToHtml(rawEditorState, hashConfig);
+    props.updateMarkup(markup);
+  };
 
   return (
     <div style={styles.root} className="column">
@@ -65,7 +72,7 @@ const RichTextEditor = () => {
       <div style={styles.editor} className="column-body">
         <Editor
           editorState={editorState}
-          onChange={setEditorState}
+          onChange={handleChange}
           placeholder="Enter some text..."
         />
       </div>
@@ -103,8 +110,13 @@ const styles = {
     margin: "5px",
   },
   redText: {
-    color: "red"
+    color: "red",
   },
+};
+
+const hashConfig = {
+  trigger: "#",
+  separator: " ",
 };
 
 export default RichTextEditor;
