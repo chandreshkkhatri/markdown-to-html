@@ -10,12 +10,20 @@ const RichTextEditor = (props) => {
   const handleChange = (newEditorState) => {
     setEditorState(newEditorState);
     const rawEditorState = convertToRaw(newEditorState.getCurrentContent());
-    const markup = draftToHtml(rawEditorState, hashConfig);
+    const markup = draftToHtml(rawEditorState);
     props.updateMarkup(markup);
   };
   const _onBoldClick = () => {
-    RichUtils.toggleInlineStyle(editorState, 'BOLD');
-  }
+    handleChange(RichUtils.toggleInlineStyle(editorState, "BOLD"));
+  };
+
+  const _onItalicClick = () => {
+    handleChange(RichUtils.toggleInlineStyle(editorState, "ITALIC"));
+  };
+
+  const _onUnderlineClick = () => {
+    handleChange(RichUtils.toggleInlineStyle(editorState, "UNDERLINE"));
+  };
 
   return (
     <div style={styles.root} className="column">
@@ -31,13 +39,19 @@ const RichTextEditor = (props) => {
           </select>
         </div>
         <div style={styles.inlineInputs}>
-          <button style={styles.bold} onClick={_onBoldClick}>B</button>
+          <button style={styles.bold} onClick={_onBoldClick}>
+            B
+          </button>
         </div>
         <div style={styles.inlineInputs}>
-          <button style={styles.italic}>I</button>
+          <button style={styles.italic} onClick={_onItalicClick}>
+            I
+          </button>
         </div>
         <div style={styles.inlineInputs}>
-          <button style={styles.underline}>U</button>
+          <button style={styles.underline} onClick={_onUnderlineClick}>
+            U
+          </button>
         </div>
         <div style={styles.inlineInputs}>
           <button style={styles.redText}>A</button>
@@ -94,6 +108,8 @@ const styles = {
     cursor: "text",
     minHeight: 80,
     padding: 10,
+    backgroundColor: "#fff",
+    color: "#000",
   },
   button: {
     marginTop: 10,
@@ -115,11 +131,6 @@ const styles = {
   redText: {
     color: "red",
   },
-};
-
-const hashConfig = {
-  trigger: "#",
-  separator: " ",
 };
 
 export default RichTextEditor;
