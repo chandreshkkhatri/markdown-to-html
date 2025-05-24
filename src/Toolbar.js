@@ -1,24 +1,5 @@
 import React from "react";
 
-const styleMap = {
-  RED_TEXT: { color: "red" },
-  BLUE_TEXT: { color: "blue" },
-  GREEN_TEXT: { color: "green" },
-  ORANGE_TEXT: { color: "orange" },
-  PURPLE_TEXT: { color: "purple" },
-};
-
-const styles = {
-  inlineInputs: {
-    display: "inline",
-    margin: "5px",
-  },
-  bold: { fontWeight: "bold" },
-  italic: { fontStyle: "italic" },
-  underline: { textDecoration: "underline" },
-  button: { marginTop: 10, textAlign: "center" },
-};
-
 function Toolbar({
   onBoldClick,
   onItalicClick,
@@ -31,6 +12,8 @@ function Toolbar({
   onToggleAlignment,
   onToggleUnorderedList,
   onToggleOrderedList,
+  styleMap,
+  styles,
 }) {
   return (
     <div className="column-header">
@@ -83,23 +66,19 @@ function Toolbar({
         </button>
       </div>
       <div style={styles.inlineInputs}>
-        {[
-          "RED_TEXT",
-          "BLUE_TEXT",
-          "GREEN_TEXT",
-          "ORANGE_TEXT",
-          "PURPLE_TEXT",
-        ].map((colorKey) => (
-          <button
-            key={colorKey}
-            style={{ ...styles.button, color: styleMap[colorKey].color }}
-            onClick={() => onToggleColor(colorKey)}
-            title={`Text color ${styleMap[colorKey].color}`}
-            aria-label={`Text color ${styleMap[colorKey].color}`}
-          >
-            A
-          </button>
-        ))}
+        {Object.keys(styleMap)
+          .filter((k) => k.endsWith("_TEXT"))
+          .map((colorKey) => (
+            <button
+              key={colorKey}
+              style={{ ...styles.button, color: styleMap[colorKey].color }}
+              onClick={() => onToggleColor(colorKey)}
+              title={`Text color ${styleMap[colorKey].color}`}
+              aria-label={`Text color ${styleMap[colorKey].color}`}
+            >
+              A
+            </button>
+          ))}
       </div>
       <div style={styles.inlineInputs}>
         <button

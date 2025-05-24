@@ -11,7 +11,7 @@ import "draft-js/dist/Draft.css";
 import draftToHtml from "draftjs-to-html";
 import Toolbar from "./Toolbar";
 
-const styleMap = {
+export const styleMap = {
   RED_TEXT: { color: "red" },
   BLUE_TEXT: { color: "blue" },
   GREEN_TEXT: { color: "green" },
@@ -25,6 +25,39 @@ const styleMap = {
   FONT_SIZE_24: { fontSize: "24px" },
   FONT_SIZE_28: { fontSize: "28px" },
   FONT_SIZE_32: { fontSize: "32px" },
+};
+
+export const styles = {
+  root: {
+    fontFamily: "'Helvetica', sans-serif",
+    padding: 20,
+    width: 600,
+  },
+  editor: {
+    border: "1px solid #ccc",
+    cursor: "text",
+    minHeight: 80,
+    padding: 10,
+    backgroundColor: "#fff",
+    color: "#000",
+  },
+  button: {
+    marginTop: 10,
+    textAlign: "center",
+  },
+  bold: {
+    fontWeight: "bold",
+  },
+  italic: {
+    fontStyle: "italic",
+  },
+  underline: {
+    textDecoration: "underline",
+  },
+  inlineInputs: {
+    display: "inline",
+    margin: "5px",
+  },
 };
 
 function getBlockStyle(block) {
@@ -220,51 +253,39 @@ const RichTextEditor = (props) => {
         onToggleAlignment={_onToggleAlignment}
         onToggleUnorderedList={_onToggleUnorderedList}
         onToggleOrderedList={_onToggleOrderedList}
+        styleMap={styleMap}
+        styles={styles}
       />
       <div style={styles.editor} className="column-body">
         <Editor
           editorState={editorState}
           onChange={handleChange}
           placeholder="Enter some text..."
-          customStyleMap={styleMap} // For inline styles like color
-          blockStyleFn={getBlockStyle} // For block styles like alignment
+          customStyleMap={styleMap}
+          blockStyleFn={getBlockStyle}
         />
       </div>
     </div>
   );
 };
 
-const styles = {
-  root: {
-    fontFamily: "'Helvetica', sans-serif",
-    padding: 20,
-    width: 600,
-  },
-  editor: {
-    border: "1px solid #ccc",
-    cursor: "text",
-    minHeight: 80,
-    padding: 10,
-    backgroundColor: "#fff",
-    color: "#000",
-  },
-  button: {
-    marginTop: 10,
-    textAlign: "center",
-  },
-  bold: {
-    fontWeight: "bold",
-  },
-  italic: {
-    fontStyle: "italic",
-  },
-  underline: {
-    textDecoration: "underline",
-  },
-  inlineInputs: {
-    display: "inline",
-    margin: "5px",
-  },
-};
+function getBlockStyle(block) {
+  const textAlign = block.getData().get("textAlign");
+  if (textAlign) {
+    switch (textAlign) {
+      case "left":
+        return "align-left";
+      case "center":
+        return "align-center";
+      case "right":
+        return "align-right";
+      case "justify":
+        return "align-justify";
+      default:
+        return null;
+    }
+  }
+  return null;
+}
 
 export default RichTextEditor;
