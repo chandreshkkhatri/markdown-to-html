@@ -98,6 +98,14 @@ const RichTextEditor = (props) => {
     );
   };
 
+  const _onToggleUnorderedList = () => {
+    handleChange(RichUtils.toggleBlockType(editorState, "unordered-list-item"));
+  };
+
+  const _onToggleOrderedList = () => {
+    handleChange(RichUtils.toggleBlockType(editorState, "ordered-list-item"));
+  };
+
   return (
     <div style={styles.root} className="column">
       <div className="column-header">
@@ -161,6 +169,14 @@ const RichTextEditor = (props) => {
           </button>
           <button onClick={() => _onToggleAlignment("right")}>
             <i className="fas fa-align-right"></i>
+          </button>
+        </div>
+        <div style={styles.inlineInputs}>
+          <button onClick={_onToggleUnorderedList}>
+            <i className="fas fa-list-ul"></i> {}
+          </button>
+          <button onClick={_onToggleOrderedList}>
+            <i className="fas fa-list-ol"></i> {}
           </button>
         </div>
       </div>
