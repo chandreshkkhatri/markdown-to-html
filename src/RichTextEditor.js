@@ -9,6 +9,7 @@ import {
 } from "draft-js";
 import "draft-js/dist/Draft.css";
 import draftToHtml from "draftjs-to-html";
+import Toolbar from "./Toolbar";
 
 const styleMap = {
   RED_TEXT: { color: "red" },
@@ -207,137 +208,19 @@ const RichTextEditor = (props) => {
 
   return (
     <div style={styles.root} className="column">
-      <div className="column-header">
-        <div style={styles.inlineInputs}>
-          <select aria-label="Font family">
-            <option value="">Arial</option>
-          </select>
-        </div>
-        <div style={styles.inlineInputs}>
-          <select
-            onChange={(e) => _onToggleFontSize(e.target.value)}
-            aria-label="Font size"
-          >
-            <option value="">Font Size</option>
-            <option value="FONT_SIZE_12">12px</option>
-            <option value="FONT_SIZE_14">14px</option>
-            <option value="FONT_SIZE_16">16px</option>
-            <option value="FONT_SIZE_18">18px</option>
-            <option value="FONT_SIZE_20">20px</option>
-            <option value="FONT_SIZE_24">24px</option>
-            <option value="FONT_SIZE_28">28px</option>
-            <option value="FONT_SIZE_32">32px</option>
-          </select>
-        </div>
-        <div style={styles.inlineInputs}>
-          <button
-            style={styles.bold}
-            onClick={_onBoldClick}
-            aria-label="Bold (Ctrl+B)"
-          >
-            B
-          </button>
-        </div>
-        <div style={styles.inlineInputs}>
-          <button
-            style={styles.italic}
-            onClick={_onItalicClick}
-            aria-label="Italic (Ctrl+I)"
-          >
-            I
-          </button>
-        </div>
-        <div style={styles.inlineInputs}>
-          <button
-            style={styles.underline}
-            onClick={_onUnderlineClick}
-            aria-label="Underline (Ctrl+U)"
-          >
-            U
-          </button>
-        </div>
-        {/* Color options */}
-        <div style={styles.inlineInputs}>
-          {[
-            "RED_TEXT",
-            "BLUE_TEXT",
-            "GREEN_TEXT",
-            "ORANGE_TEXT",
-            "PURPLE_TEXT",
-          ].map((colorKey) => (
-            <button
-              key={colorKey}
-              style={{ ...styles.button, color: styleMap[colorKey].color }}
-              onClick={() => _onToggleColor(colorKey)}
-              title={`Text color ${styleMap[colorKey].color}`}
-              aria-label={`Text color ${styleMap[colorKey].color}`}
-            >
-              A
-            </button>
-          ))}
-        </div>
-        <div style={styles.inlineInputs}>
-          <button
-            onClick={_onInsertLink}
-            title="Insert Link"
-            aria-label="Insert Link"
-          >
-            <i className="fas fa-link"></i>
-          </button>
-        </div>
-        <div style={styles.inlineInputs}>
-          <button
-            onClick={_onInsertImage}
-            title="Insert Image"
-            aria-label="Insert Image"
-          >
-            <i className="fas fa-images"></i>
-          </button>
-        </div>
-        <div style={styles.inlineInputs}>
-          <button
-            onClick={() => _onToggleAlignment("justify")}
-            aria-label="Justify"
-          >
-            <i className="fas fa-align-justify"></i>
-          </button>
-          <button
-            onClick={() => _onToggleAlignment("left")}
-            aria-label="Align Left"
-          >
-            <i className="fas fa-align-left"></i>
-          </button>
-          <button
-            onClick={() => _onToggleAlignment("center")}
-            aria-label="Align Center"
-          >
-            <i className="fas fa-align-center"></i>
-          </button>
-          <button
-            onClick={() => _onToggleAlignment("right")}
-            aria-label="Align Right"
-          >
-            <i className="fas fa-align-right"></i>
-          </button>
-        </div>
-        <div style={styles.inlineInputs}>
-          <button onClick={_onToggleUnorderedList} aria-label="Bullet List">
-            <i className="fas fa-list-ul"></i>
-          </button>
-          <button onClick={_onToggleOrderedList} aria-label="Numbered List">
-            <i className="fas fa-list-ol"></i>
-          </button>
-        </div>
-        <div style={styles.inlineInputs}>
-          <button
-            onClick={_onInsertTable}
-            title="Insert Table"
-            aria-label="Insert Table"
-          >
-            <i className="fas fa-table"></i>
-          </button>
-        </div>
-      </div>
+      <Toolbar
+        onBoldClick={_onBoldClick}
+        onItalicClick={_onItalicClick}
+        onUnderlineClick={_onUnderlineClick}
+        onToggleColor={_onToggleColor}
+        onToggleFontSize={_onToggleFontSize}
+        onInsertLink={_onInsertLink}
+        onInsertImage={_onInsertImage}
+        onInsertTable={_onInsertTable}
+        onToggleAlignment={_onToggleAlignment}
+        onToggleUnorderedList={_onToggleUnorderedList}
+        onToggleOrderedList={_onToggleOrderedList}
+      />
       <div style={styles.editor} className="column-body">
         <Editor
           editorState={editorState}
