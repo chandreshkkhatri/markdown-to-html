@@ -1,7 +1,24 @@
 import React, { useState } from "react";
-import { Editor, EditorState, RichUtils, convertToRaw } from "draft-js";
+import {
+  Editor,
+  EditorState,
+  RichUtils,
+  convertToRaw,
+  Modifier,
+} from "draft-js";
 import "draft-js/dist/Draft.css";
 import draftToHtml from "draftjs-to-html";
+
+// Custom style map for colors
+const styleMap = {
+  RED_TEXT: {
+    color: "red",
+  },
+  // Add more colors here if needed
+  // BLUE_TEXT: {
+  //   color: 'blue',
+  // },
+};
 
 const RichTextEditor = (props) => {
   const [editorState, setEditorState] = useState(() =>
@@ -10,7 +27,7 @@ const RichTextEditor = (props) => {
   const handleChange = (newEditorState) => {
     setEditorState(newEditorState);
     const rawEditorState = convertToRaw(newEditorState.getCurrentContent());
-    const markup = draftToHtml(rawEditorState);
+    const markup = draftToHtml(rawEditorState, {}, undefined, styleMap); // Pass styleMap to draftToHtml
     props.updateMarkup(markup);
   };
   const _onBoldClick = () => {
@@ -23,6 +40,10 @@ const RichTextEditor = (props) => {
 
   const _onUnderlineClick = () => {
     handleChange(RichUtils.toggleInlineStyle(editorState, "UNDERLINE"));
+  };
+
+  const _onToggleColor = (colorStyle) => {
+    handleChange(RichUtils.toggleInlineStyle(editorState, colorStyle));
   };
 
   return (
@@ -54,7 +75,12 @@ const RichTextEditor = (props) => {
           </button>
         </div>
         <div style={styles.inlineInputs}>
-          <button style={styles.redText}>A</button>
+          <button
+            style={styles.redTextButton}
+            onClick={() => _onToggleColor("RED_TEXT")}
+          >
+            A
+          </button>
         </div>
         <div style={styles.inlineInputs}>
           <button>
@@ -91,6 +117,7 @@ const RichTextEditor = (props) => {
           editorState={editorState}
           onChange={handleChange}
           placeholder="Enter some text..."
+          customStyleMap={styleMap} // Pass styleMap to Editor
         />
       </div>
     </div>
@@ -128,8 +155,10 @@ const styles = {
     display: "inline",
     margin: "5px",
   },
-  redText: {
+  redTextButton: {
+    // Renamed from redText to avoid confusion, this styles the button itself
     color: "red",
+    fontWeight: "bold",
   },
 };
 
