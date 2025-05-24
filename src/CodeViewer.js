@@ -35,9 +35,12 @@ const CodeViewer = (props) => {
     <div className="column">
       <div className="column-header">
         <div style={styles.inlineInputs}>
-          <button onClick={handleDownload}>Download</button>
-        </div>
-        <div style={styles.inlineInputs}>
+          <label
+            htmlFor="download-type"
+            style={{ marginRight: 8, fontWeight: 500 }}
+          >
+            Download as:
+          </label>
           <input
             type="radio"
             value="md"
@@ -61,9 +64,37 @@ const CodeViewer = (props) => {
           <label style={styles.smallFontSize} htmlFor="html">
             HTML
           </label>
+          <button
+            onClick={handleDownload}
+            style={{
+              marginLeft: 16,
+              padding: "6px 16px",
+              borderRadius: 4,
+              border: "1px solid #888",
+              background: "#f5f5f5",
+              fontWeight: 500,
+              cursor: "pointer",
+              fontSize: 14,
+            }}
+            aria-label={`Download as ${type === "md" ? "Markdown" : "HTML"}`}
+          >
+            Download
+          </button>
         </div>
       </div>
-      <div className="column-body">{processMarkup(props.markup)}</div>
+      <div
+        className="column-body"
+        style={{
+          fontSize: 14,
+          background: "#fafafa",
+          padding: 12,
+          minHeight: 200,
+          overflowX: "auto",
+          fontFamily: "monospace",
+        }}
+      >
+        {processMarkup(props.markup)}
+      </div>
     </div>
   );
 };
