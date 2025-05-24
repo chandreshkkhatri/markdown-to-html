@@ -6,6 +6,7 @@ function Toolbar({
   onUnderlineClick,
   onToggleColor,
   onToggleFontSize,
+  onToggleFontFamily,
   onInsertLink,
   onInsertImage,
   onInsertTable,
@@ -18,8 +19,16 @@ function Toolbar({
   return (
     <div className="column-header">
       <div style={styles.inlineInputs}>
-        <select aria-label="Font family">
-          <option value="">Arial</option>
+        <select
+          aria-label="Font family"
+          onChange={(e) => onToggleFontFamily(e.target.value)}
+        >
+          <option value="">Font Family</option>
+          <option value="FONT_FAMILY_ARIAL">Arial</option>
+          <option value="FONT_FAMILY_GEORGIA">Georgia</option>
+          <option value="FONT_FAMILY_HELVETICA">Helvetica</option>
+          <option value="FONT_FAMILY_MONOSPACE">Monospace</option>
+          <option value="FONT_FAMILY_TIMES">Times New Roman</option>
         </select>
       </div>
       <div style={styles.inlineInputs}>

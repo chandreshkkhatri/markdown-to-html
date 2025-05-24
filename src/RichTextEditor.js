@@ -25,6 +25,11 @@ export const styleMap = {
   FONT_SIZE_24: { fontSize: "24px" },
   FONT_SIZE_28: { fontSize: "28px" },
   FONT_SIZE_32: { fontSize: "32px" },
+  FONT_FAMILY_ARIAL: { fontFamily: "Arial, sans-serif" },
+  FONT_FAMILY_GEORGIA: { fontFamily: "Georgia, serif" },
+  FONT_FAMILY_HELVETICA: { fontFamily: "Helvetica, Arial, sans-serif" },
+  FONT_FAMILY_MONOSPACE: { fontFamily: "monospace" },
+  FONT_FAMILY_TIMES: { fontFamily: "'Times New Roman', Times, serif" },
 };
 
 export const styles = {
@@ -149,6 +154,12 @@ const RichTextEditor = (props) => {
     }
   };
 
+  const _onToggleFontFamily = (familyStyle) => {
+    if (familyStyle) {
+      handleChange(RichUtils.toggleInlineStyle(editorState, familyStyle));
+    }
+  };
+
   const _onToggleAlignment = (alignment) => {
     const selection = editorState.getSelection();
     const contentState = editorState.getCurrentContent();
@@ -247,6 +258,7 @@ const RichTextEditor = (props) => {
         onUnderlineClick={_onUnderlineClick}
         onToggleColor={_onToggleColor}
         onToggleFontSize={_onToggleFontSize}
+        onToggleFontFamily={_onToggleFontFamily}
         onInsertLink={_onInsertLink}
         onInsertImage={_onInsertImage}
         onInsertTable={_onInsertTable}
