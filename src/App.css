@@ -1,31 +1,32 @@
 .App {
-  text-align: center;
   display: flex;
-  align-content: stretch;
-  height: 500px;
-  justify-content: center;
   flex-wrap: wrap;
+  min-height: 100vh;
+  justify-content: center;
+  background: var(--bg, #fff);
+  color: var(--text, #000);
 }
 
 .column {
-  background-color: #f1f1f1;
+  --surface: #f1f1f1;
+  flex: 1 1 40%;
   margin: 10px;
   padding: 20px;
-  width: 40%;
-  font-size: 30px;
+  background: var(--surface, #f1f1f1);
+  border-radius: 8px;
 }
 
 .column-header {
-  border: solid black;
-  border-width: 0 0 1px 0;
-  height: 50px;
+  border-bottom: 1px solid var(--border, #ccc);
+  padding-bottom: 10px;
 }
 
 .column-body {
-  border: 1px solid rgb(129, 116, 116);
+  border: 1px solid var(--border, #ccc);
+  border-radius: 4px;
 }
 
-/* Text Alignment Classes for Draft.js Editor */
+/* Text Alignment */
 .align-left {
   text-align: left;
 }
@@ -37,4 +38,31 @@
 }
 .align-justify {
   text-align: justify;
+}
+
+/* Dark Mode */
+.dark-mode {
+  background: #181a1b;
+  color: #f1f1f1;
+}
+.dark-mode .column {
+  background: #23272b;
+  color: #f1f1f1;
+}
+.dark-mode .column-header {
+  border-bottom: 1px solid #444;
+}
+.dark-mode .column-body {
+  background: #23272b;
+  border-color: #444;
+  color: #f1f1f1;
+}
+.dark-mode button,
+.dark-mode select {
+  background: #23272b;
+  color: #f1f1f1;
+  border-color: #444;
+}
+.dark-mode input[type="radio"]:checked + label {
+  color: #fff;
 }
