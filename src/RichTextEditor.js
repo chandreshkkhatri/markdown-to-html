@@ -269,23 +269,4 @@ const RichTextEditor = (props) => {
   );
 };
 
-function getBlockStyle(block) {
-  const textAlign = block.getData().get("textAlign");
-  if (textAlign) {
-    switch (textAlign) {
-      case "left":
-        return "align-left";
-      case "center":
-        return "align-center";
-      case "right":
-        return "align-right";
-      case "justify":
-        return "align-justify";
-      default:
-        return null;
-    }
-  }
-  return null;
-}
-
 export default RichTextEditor;
