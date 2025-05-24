@@ -16,7 +16,7 @@
 }
 
 .column-header {
-  border:  solid black;
+  border: solid black;
   border-width: 0 0 1px 0;
   height: 50px;
 }
@@ -25,5 +25,16 @@
   border: 1px solid rgb(129, 116, 116);
 }
 
-.text-editor {
+/* Text Alignment Classes for Draft.js Editor */
+.align-left {
+  text-align: left;
+}
+.align-center {
+  text-align: center;
+}
+.align-right {
+  text-align: right;
+}
+.align-justify {
+  text-align: justify;
 }

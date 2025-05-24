@@ -20,6 +20,26 @@ const styleMap = {
   // },
 };
 
+// Function to get block style for alignment (for Editor prop)
+function getBlockStyle(block) {
+  const textAlign = block.getData().get("textAlign");
+  if (textAlign) {
+    switch (textAlign) {
+      case "left":
+        return "align-left";
+      case "center":
+        return "align-center";
+      case "right":
+        return "align-right";
+      case "justify":
+        return "align-justify";
+      default:
+        return null;
+    }
+  }
+  return null;
+}
+
 const RichTextEditor = (props) => {
   const [editorState, setEditorState] = useState(() =>
     EditorState.createEmpty()
@@ -27,7 +47,26 @@ const RichTextEditor = (props) => {
   const handleChange = (newEditorState) => {
     setEditorState(newEditorState);
     const rawEditorState = convertToRaw(newEditorState.getCurrentContent());
-    const markup = draftToHtml(rawEditorState, {}, undefined, styleMap); // Pass styleMap to draftToHtml
+    // Corrected draftToHtml call:
+    // 1. Removed styleMap from the entityStyleFn position.
+    // 2. Added blockStyleFn for alignment.
+    const markup = draftToHtml(
+      rawEditorState,
+      {}, // hashtagConfig (not using)
+      undefined, // customEntityTransform (not using)
+      undefined, // entityStyleFn (was incorrectly styleMap)
+      (block) => {
+        // blockStyleFn for draftjs-to-html
+        if (block.data && block.data.textAlign) {
+          return {
+            style: {
+              textAlign: block.data.textAlign,
+            },
+          };
+        }
+        return null;
+      }
+    );
     props.updateMarkup(markup);
   };
   const _onBoldClick = () => {
@@ -44,6 +83,19 @@ const RichTextEditor = (props) => {
 
   const _onToggleColor = (colorStyle) => {
     handleChange(RichUtils.toggleInlineStyle(editorState, colorStyle));
+  };
+
+  const _onToggleAlignment = (alignment) => {
+    const selection = editorState.getSelection();
+    const contentState = editorState.getCurrentContent();
+    // Clear existing alignment before applying a new one if needed,
+    // or simply set the new one. For now, just setting.
+    let newContentState = Modifier.setBlockData(contentState, selection, {
+      textAlign: alignment,
+    });
+    handleChange(
+      EditorState.push(editorState, newContentState, "change-block-data")
+    );
   };
 
   return (
@@ -98,16 +150,16 @@ const RichTextEditor = (props) => {
           </button>
         </div>
         <div style={styles.inlineInputs}>
-          <button>
+          <button onClick={() => _onToggleAlignment("justify")}>
             <i className="fas fa-align-justify"></i>
           </button>
-          <button>
+          <button onClick={() => _onToggleAlignment("left")}>
             <i className="fas fa-align-left"></i>
           </button>
-          <button>
+          <button onClick={() => _onToggleAlignment("center")}>
             <i className="fas fa-align-center"></i>
           </button>
-          <button>
+          <button onClick={() => _onToggleAlignment("right")}>
             <i className="fas fa-align-right"></i>
           </button>
         </div>
@@ -117,7 +169,8 @@ const RichTextEditor = (props) => {
           editorState={editorState}
           onChange={handleChange}
           placeholder="Enter some text..."
-          customStyleMap={styleMap} // Pass styleMap to Editor
+          customStyleMap={styleMap} // For inline styles like color
+          blockStyleFn={getBlockStyle} // For block styles like alignment
         />
       </div>
     </div>
