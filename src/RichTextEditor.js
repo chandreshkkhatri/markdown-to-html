@@ -123,10 +123,22 @@ const RichTextEditor = (props) => {
         }
       },
       (block) => {
+        // Semantic block mapping
+        if (block.type === "unordered-list-item") return { element: "li", nest: "ul" };
+        if (block.type === "ordered-list-item") return { element: "li", nest: "ol" };
+        if (block.type === "unstyled") return { element: "p" };
+        if (block.type === "header-one") return { element: "h1" };
+        if (block.type === "header-two") return { element: "h2" };
+        if (block.type === "header-three") return { element: "h3" };
         if (block.data && block.data.textAlign) {
           return { style: { textAlign: block.data.textAlign } };
         }
         return null;
+      },
+      {
+        BOLD: { element: "strong" },
+        ITALIC: { element: "em" },
+        UNDERLINE: { element: "u" },
       }
     );
     props.updateMarkup(markup);
