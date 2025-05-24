@@ -5,22 +5,27 @@ import {
   RichUtils,
   convertToRaw,
   Modifier,
+  AtomicBlockUtils,
 } from "draft-js";
 import "draft-js/dist/Draft.css";
 import draftToHtml from "draftjs-to-html";
 
-// Custom style map for colors
 const styleMap = {
-  RED_TEXT: {
-    color: "red",
-  },
-  // Add more colors here if needed
-  // BLUE_TEXT: {
-  //   color: 'blue',
-  // },
+  RED_TEXT: { color: "red" },
+  BLUE_TEXT: { color: "blue" },
+  GREEN_TEXT: { color: "green" },
+  ORANGE_TEXT: { color: "orange" },
+  PURPLE_TEXT: { color: "purple" },
+  FONT_SIZE_12: { fontSize: "12px" },
+  FONT_SIZE_14: { fontSize: "14px" },
+  FONT_SIZE_16: { fontSize: "16px" },
+  FONT_SIZE_18: { fontSize: "18px" },
+  FONT_SIZE_20: { fontSize: "20px" },
+  FONT_SIZE_24: { fontSize: "24px" },
+  FONT_SIZE_28: { fontSize: "28px" },
+  FONT_SIZE_32: { fontSize: "32px" },
 };
 
-// Function to get block style for alignment (for Editor prop)
 function getBlockStyle(block) {
   const textAlign = block.getData().get("textAlign");
   if (textAlign) {
@@ -47,28 +52,47 @@ const RichTextEditor = (props) => {
   const handleChange = (newEditorState) => {
     setEditorState(newEditorState);
     const rawEditorState = convertToRaw(newEditorState.getCurrentContent());
-    // Corrected draftToHtml call:
-    // 1. Removed styleMap from the entityStyleFn position.
-    // 2. Added blockStyleFn for alignment.
     const markup = draftToHtml(
       rawEditorState,
-      {}, // hashtagConfig (not using)
-      undefined, // customEntityTransform (not using)
-      undefined, // entityStyleFn (was incorrectly styleMap)
-      (block) => {
-        // blockStyleFn for draftjs-to-html
-        if (block.data && block.data.textAlign) {
+      {},
+      undefined,
+      (entity) => {
+        if (entity.type === "IMAGE") {
           return {
-            style: {
-              textAlign: block.data.textAlign,
+            element: "img",
+            attributes: {
+              src: entity.data.src,
+              alt: entity.data.alt || "",
             },
           };
+        }
+        if (entity.type === "LINK") {
+          return {
+            element: "a",
+            attributes: {
+              href: entity.data.url,
+              target: "_blank",
+              rel: "noopener noreferrer",
+            },
+          };
+        }
+        if (entity.type === "TABLE") {
+          return {
+            element: false,
+            html: entity.data.html,
+          };
+        }
+      },
+      (block) => {
+        if (block.data && block.data.textAlign) {
+          return { style: { textAlign: block.data.textAlign } };
         }
         return null;
       }
     );
     props.updateMarkup(markup);
   };
+
   const _onBoldClick = () => {
     handleChange(RichUtils.toggleInlineStyle(editorState, "BOLD"));
   };
@@ -85,11 +109,15 @@ const RichTextEditor = (props) => {
     handleChange(RichUtils.toggleInlineStyle(editorState, colorStyle));
   };
 
+  const _onToggleFontSize = (sizeStyle) => {
+    if (sizeStyle) {
+      handleChange(RichUtils.toggleInlineStyle(editorState, sizeStyle));
+    }
+  };
+
   const _onToggleAlignment = (alignment) => {
     const selection = editorState.getSelection();
     const contentState = editorState.getCurrentContent();
-    // Clear existing alignment before applying a new one if needed,
-    // or simply set the new one. For now, just setting.
     let newContentState = Modifier.setBlockData(contentState, selection, {
       textAlign: alignment,
     });
@@ -106,77 +134,207 @@ const RichTextEditor = (props) => {
     handleChange(RichUtils.toggleBlockType(editorState, "ordered-list-item"));
   };
 
+  const _onInsertImage = () => {
+    const url = prompt("Enter image URL");
+    if (!url) return;
+    const contentState = editorState.getCurrentContent();
+    const contentStateWithEntity = contentState.createEntity(
+      "IMAGE",
+      "IMMUTABLE",
+      { src: url }
+    );
+    const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
+    const newEditorState = EditorState.set(editorState, {
+      currentContent: contentStateWithEntity,
+    });
+    handleChange(
+      AtomicBlockUtils.insertAtomicBlock(newEditorState, entityKey, " ")
+    );
+  };
+
+  const _onInsertLink = () => {
+    const url = prompt("Enter link URL");
+    if (!url) return;
+    const selection = editorState.getSelection();
+    if (selection.isCollapsed()) {
+      alert("Please select the text you want to link.");
+      return;
+    }
+    const contentState = editorState.getCurrentContent();
+    const contentStateWithEntity = contentState.createEntity(
+      "LINK",
+      "MUTABLE",
+      { url }
+    );
+    const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
+    let newEditorState = EditorState.set(editorState, {
+      currentContent: contentStateWithEntity,
+    });
+    newEditorState = RichUtils.toggleLink(newEditorState, selection, entityKey);
+    handleChange(newEditorState);
+  };
+
+  const _onInsertTable = () => {
+    const rows = parseInt(prompt("Number of rows?", "2"), 10);
+    const cols = parseInt(prompt("Number of columns?", "2"), 10);
+    if (!rows || !cols || rows < 1 || cols < 1) return;
+    let table = '<table style="width:100%;border-collapse:collapse;">';
+    for (let r = 0; r < rows; r++) {
+      table += "<tr>";
+      for (let c = 0; c < cols; c++) {
+        table +=
+          r === 0
+            ? '<th style="border:1px solid #ccc;padding:4px;">Header</th>'
+            : '<td style="border:1px solid #ccc;padding:4px;">Cell</td>';
+      }
+      table += "</tr>";
+    }
+    table += "</table>";
+    const contentState = editorState.getCurrentContent();
+    const contentStateWithEntity = contentState.createEntity(
+      "TABLE",
+      "IMMUTABLE",
+      { html: table }
+    );
+    const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
+    const newEditorState = EditorState.set(editorState, {
+      currentContent: contentStateWithEntity,
+    });
+    handleChange(
+      AtomicBlockUtils.insertAtomicBlock(newEditorState, entityKey, " ")
+    );
+  };
+
   return (
     <div style={styles.root} className="column">
       <div className="column-header">
         <div style={styles.inlineInputs}>
-          <select>
+          <select aria-label="Font family">
             <option value="">Arial</option>
           </select>
         </div>
         <div style={styles.inlineInputs}>
-          <select>
-            <option value="">Normal Text</option>
+          <select
+            onChange={(e) => _onToggleFontSize(e.target.value)}
+            aria-label="Font size"
+          >
+            <option value="">Font Size</option>
+            <option value="FONT_SIZE_12">12px</option>
+            <option value="FONT_SIZE_14">14px</option>
+            <option value="FONT_SIZE_16">16px</option>
+            <option value="FONT_SIZE_18">18px</option>
+            <option value="FONT_SIZE_20">20px</option>
+            <option value="FONT_SIZE_24">24px</option>
+            <option value="FONT_SIZE_28">28px</option>
+            <option value="FONT_SIZE_32">32px</option>
           </select>
         </div>
         <div style={styles.inlineInputs}>
-          <button style={styles.bold} onClick={_onBoldClick}>
+          <button
+            style={styles.bold}
+            onClick={_onBoldClick}
+            aria-label="Bold (Ctrl+B)"
+          >
             B
           </button>
         </div>
         <div style={styles.inlineInputs}>
-          <button style={styles.italic} onClick={_onItalicClick}>
+          <button
+            style={styles.italic}
+            onClick={_onItalicClick}
+            aria-label="Italic (Ctrl+I)"
+          >
             I
           </button>
         </div>
         <div style={styles.inlineInputs}>
-          <button style={styles.underline} onClick={_onUnderlineClick}>
+          <button
+            style={styles.underline}
+            onClick={_onUnderlineClick}
+            aria-label="Underline (Ctrl+U)"
+          >
             U
           </button>
         </div>
+        {/* Color options */}
         <div style={styles.inlineInputs}>
-          <button
-            style={styles.redTextButton}
-            onClick={() => _onToggleColor("RED_TEXT")}
-          >
-            A
-          </button>
+          {[
+            "RED_TEXT",
+            "BLUE_TEXT",
+            "GREEN_TEXT",
+            "ORANGE_TEXT",
+            "PURPLE_TEXT",
+          ].map((colorKey) => (
+            <button
+              key={colorKey}
+              style={{ ...styles.button, color: styleMap[colorKey].color }}
+              onClick={() => _onToggleColor(colorKey)}
+              title={`Text color ${styleMap[colorKey].color}`}
+              aria-label={`Text color ${styleMap[colorKey].color}`}
+            >
+              A
+            </button>
+          ))}
         </div>
         <div style={styles.inlineInputs}>
-          <button>
+          <button
+            onClick={_onInsertLink}
+            title="Insert Link"
+            aria-label="Insert Link"
+          >
             <i className="fas fa-link"></i>
           </button>
         </div>
         <div style={styles.inlineInputs}>
-          <button>
-            <i className="fas fa-table"></i>
-          </button>
-        </div>
-        <div style={styles.inlineInputs}>
-          <button>
+          <button
+            onClick={_onInsertImage}
+            title="Insert Image"
+            aria-label="Insert Image"
+          >
             <i className="fas fa-images"></i>
           </button>
         </div>
         <div style={styles.inlineInputs}>
-          <button onClick={() => _onToggleAlignment("justify")}>
+          <button
+            onClick={() => _onToggleAlignment("justify")}
+            aria-label="Justify"
+          >
             <i className="fas fa-align-justify"></i>
           </button>
-          <button onClick={() => _onToggleAlignment("left")}>
+          <button
+            onClick={() => _onToggleAlignment("left")}
+            aria-label="Align Left"
+          >
             <i className="fas fa-align-left"></i>
           </button>
-          <button onClick={() => _onToggleAlignment("center")}>
+          <button
+            onClick={() => _onToggleAlignment("center")}
+            aria-label="Align Center"
+          >
             <i className="fas fa-align-center"></i>
           </button>
-          <button onClick={() => _onToggleAlignment("right")}>
+          <button
+            onClick={() => _onToggleAlignment("right")}
+            aria-label="Align Right"
+          >
             <i className="fas fa-align-right"></i>
           </button>
         </div>
         <div style={styles.inlineInputs}>
-          <button onClick={_onToggleUnorderedList}>
-            <i className="fas fa-list-ul"></i> {}
+          <button onClick={_onToggleUnorderedList} aria-label="Bullet List">
+            <i className="fas fa-list-ul"></i>
           </button>
-          <button onClick={_onToggleOrderedList}>
-            <i className="fas fa-list-ol"></i> {}
+          <button onClick={_onToggleOrderedList} aria-label="Numbered List">
+            <i className="fas fa-list-ol"></i>
+          </button>
+        </div>
+        <div style={styles.inlineInputs}>
+          <button
+            onClick={_onInsertTable}
+            title="Insert Table"
+            aria-label="Insert Table"
+          >
+            <i className="fas fa-table"></i>
           </button>
         </div>
       </div>
@@ -223,11 +381,6 @@ const styles = {
   inlineInputs: {
     display: "inline",
     margin: "5px",
-  },
-  redTextButton: {
-    // Renamed from redText to avoid confusion, this styles the button itself
-    color: "red",
-    fontWeight: "bold",
   },
 };
 
