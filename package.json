@@ -1,7 +1,6 @@
 {
   "name": "doc-to-code",
   "version": "0.1.0",
-  "homepage": "https://chandreshkkhatri.github.io/doc-to-code",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.14.1",
@@ -18,9 +17,11 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build:local": "GENERATE_SOURCEMAP=false PUBLIC_URL=/ react-scripts build",
+    "build:github": "PUBLIC_URL=/doc-to-code react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "predeploy": "npm run build",
+    "predeploy": "npm run build:github",
     "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
